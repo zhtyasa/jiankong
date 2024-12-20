@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HTML5微信网页调用监控直播加密分享播放地址</title>
+    <style type="text/css">
+      html,
+      input {
+        margin: 10px 0;
+        padding: 5px;
+        font: normal 14px/25px "微软雅黑", arial, sans-serif;
+      }
+
+      .encodeUrl {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .input-text {
+        width: 100%;
+      }
+
+      .input-button {
+        box-sizing: content-box;
+        font-size: large;
+        display: block;
+      }
+    </style>
+    <!--<script src="js/jquery.min.js?v=3.1.0" type="text/javascript" charset="utf-8"></script>-->
+    <script src="js/jquery.min.js?v=1.9.1"></script>
+    <script src="js/getVideo.min.js?v=2.4.20" type="text/javascript"></script>
+    <script src="js/jquery.qrcode.min.js"></script>
+  </head>
+
+  <body>
+    <div class="encodeUrl">
+      <label for="encodestring">待加密的url：</label>
+      <code
+        >http://cdn88.cn/?ip=监控服务器IP或域名&user=登录账号&password=密码&dev=设备sn序列号</code
+      >
+      <input
+        type="text"
+        class="input-text"
+        id="encodestring"
+        placeholder=""
+        value="http://cdn88.cn/?user=demo"
+      />
+      <input
+        type="button"
+        class="input-button"
+        id="submit"
+        value="生成随机加密url"
+      />
+      <label for="decodestring">加密后的url：</label>
+      <input
+        type="text"
+        class="input-text"
+        id="decodestring"
+        placeholder="http://cdn88.cn/?q=xxxxxx"
+      />
+      <a id="qrcode" href="#" target="_blank"></a>
+    </div>
+
+    <script type="text/javascript">
+      +(function ($) {
+        //获取参数数组
+        //var urlParms = JSON.stringify(xbear.urlParms());
+
+        $("#submit").click(function () {
+          var exp = /(http.+\?)(.+=.+)/;
+          var reg = new RegExp(exp);
+          var url = $("#encodestring").val();
+          //解析url
+          _url = url.match(reg);
+          // console.log(_url);
+          if (_url && _url.length > 2) {
+            //解析参数数组
+            var query = _url[2].split("&");
+            // console.log(query);
+            var args = new Object();
+            for (var i = 0; i < query.length; i++) {
+              var pos = query[i].indexOf("="); //查找name=value
+              if (pos == -1) continue; //如果没有找到就跳过
+              var argname = query[i].substring(0, pos); //提取name
+              var value = query[i].substring(pos + 1); //提取value
+              args[argname] = unescape(value); //解码后保存为属性
+            }
+            //参数数组
+            // console.log(args);
+            //加密参数数组
+            var encodestr = xbear.base64.encode2(JSON.stringify(args));
+            //生成新的加密url
+            encodestr = _url[1] + "q=" + encodestr;
+          } else {
+            var encodestr = url;
+          }
+
+          // console.log(encodestr);
+          $("#decodestring").val(encodestr);
+          $("#qrcode").attr("href", encodestr);
+          //$("#decodestring").text(encodestr);
+
+          //$("#qrcode").empty().qrcode(encodestr);
+          $("#qrcode").empty().qrcode({
+            //text: toUtf8(encodestr),
+            //width: 150,
+            //height: 150,
+            //background: '#f00',
+            //foreground: '#0f0',
+            text: encodestr,
+          });
+        });
+      })(jQuery);
+    </script>
+  </body>
+</html>

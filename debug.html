@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>监控直播</title>
+    <link rel="stylesheet" type="text/css" href="css/video.css" />
+    <script src="js/getVideo.js" type="text/javascript"></script>
+    <style type="text/css">
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+    </style>
+    <script>
+      var head = document.getElementsByTagName("head")[0];
+      var href = "css/video.css" + ("?v=" + Math.random()).replace(".", "");
+      var _css = document.createElement("link");
+      _css.type = "text/css";
+      _css.rel = "stylesheet";
+      _css.href = href;
+      head.appendChild(_css);
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="video-box" id="yst-video-box"></div>
+    </div>
+
+    <script type="text/javascript">
+      // 清空缓存
+      sessionStorage.clear();
+      localStorage.clear();
+
+      // noCache loadJs
+      function loadJs(path, fn) {
+        var head = document.getElementsByTagName("head")[0];
+        var src = path + ("?v=" + Math.random()).replace(".", "");
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = src;
+        head.appendChild(script);
+
+        //js加载完成执行方法,IE=onreadystatechange,FF=onload
+        script.onload = script.onreadystatechange = function () {
+          if (
+            !this.readyState ||
+            this.readyState === "loaded" ||
+            this.readyState === "complete"
+          ) {
+            // 加载完成后回调
+            if (typeof fn === "function") {
+              fn.call(this);
+            }
+            script.onload = script.onreadystatechange = null;
+          }
+        };
+      }
+
+      // 动态加载JS防止缓存
+      var jssrc = "js/getVideo.js" + ("?v=" + Math.random()).replace(".", "");
+      //var jssrc = '../src/js/getVideo.min.js';
+      loadJs(jssrc, function () {
+        $id("yst-video-box")
+          .config({
+            api: "//cdn99.cn/api", //API接口地址
+            debug: true, //是否启用本地调试
+            logs: true, //是否启用前台日志调试(手机)
+            alert: true, //是否弹出消息窗口
+            timeout: 0, //连续播放时间限制(秒),0表示不限制
+            heartbeat: 300, //心跳连接服务器间隔时间(秒)
+            login: true, //是否允许用户登录,显示登录窗口
+            // 播放列表
+            controller: false, //是否开启控制按钮(云台控制,分辨率,高/宽比)
+            list: true, //是否显示播放列表
+            filter: false, //是否过滤不在线的设备
+            jsPath: "js/", //项目js文件夹路径
+            // player: "hls-plugin",
+          })
+          .getVideo({
+            user: "demo", //无账号时需登录
+            //password: '', //密码,无密码可忽略
+            //dev: 'f445ce834bd6117e' //摄像头SN,传入单个则直接播放,不传或传多个(英文逗号分隔)则可能显示播放列表
+          });
+      });
+    </script>
+  </body>
+</html>
