@@ -1,0 +1,378 @@
+/** 
+  div.video-box                         盒模型,子类名继承该前缀
+  ├─ form.video-box-login               用户登录表单
+  │  ├─ div.form-group                  ip,user,password
+  │  │  ├─ label               
+  │  │  └─ input               
+  │  ├─ div.form-group ...              div.form-group                  
+  │  ├─ label.checkbox                  是否记住密码  
+  │  │  └─ input
+  │  └─ button.video-box-submit         表单提交
+  │
+  ├─ div.video-box-wrap                 容器,等比缩放
+  │  ├─ div.video-box-player            播放器
+  │  └─ div.video-box-controller        播放控制
+  │     ├─ div                          云台控制及播放状态
+  │     └─ iframe                       用于遮挡视频               
+  │
+  ├─ ul.video-box-list                  播放列表
+  │  ├─ li.video-box-list-item          列表项   
+  │  │  └─ div.video-box-wrap           容器,等比缩放
+  │  │     ├─ h3.@video-state           视频名称       z-index = 0
+  │  │     ├─ div.video-box-player      播放器         z-index = -1
+  │  │     └─ div.video-box-controller  播放控制       z-index = 0
+  │  │        ├─ div                    云台控制及播放状态    
+  │  │        └─ iframe                 用于遮挡视频   z-index = -1 
+  │  └─ li ...
+  │ 
+  ├─ div.video-box-logout               退出登录
+  │  └─ button.video-box-submit         表单提交
+  │
+  └─ textarea.video-box-logs            日志
+*/
+
+//变量定义
+@grid-columns: 12; //网格数量
+@grid-gutter-width: 20px; //网格间距
+@font-family: "微软雅黑", arial, sans-serif; //默认字体库
+@font-size: 14px; //默认字体大小
+@line-height: 1.5; //默认字体高度 //rem
+@bg-color: #fff; //默认背景色
+@text-color: #000; //默认文字色
+@margin: 5px; //默认外边距
+@padding: 5px; //默认内边距
+
+//MIXINS
+//圆角
+.border-radius(@radius: @padding) {
+  border: 1px solid #ccc;
+  border-radius: @radius;
+}
+
+//等比缩放(百分比)
+.ratio(@ratio) {
+  width: 100%;
+  height: 0;
+  padding-bottom: @ratio;
+}
+
+//透明度0-100
+.opacity(@opacity) {
+  filter: alpha(opacity=@opacity);
+  -moz-opacity: (@opacity / 100);
+  -khtml-opacity: (@opacity / 100);
+  opacity: (@opacity / 100);
+}
+
+//盒模型
+.video-box {
+  //设置相对定位，保证登录窗口的居中
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  //未设置父容器高度时js设置
+  //min-height: 350px;
+  //设置父容器高度时js设置溢出表现
+  //overflow: auto;
+  //默认字体及颜色
+  font-family: @font-family;
+  font-size: @font-size;
+  font-weight: normal;
+  line-height: @line-height;
+  color: @text-color;
+  background-color: @bg-color;
+
+  * {
+    //设置盒模型,消除padding影响元素宽度
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  }
+}
+
+//登录窗口
+.video-box-login {
+  width: 80%;
+  max-width: 300px;
+  //通过js控制magin-top值来居中
+  margin: auto;
+  padding: (@padding * 4);
+  .border-radius();
+  background: @bg-color;
+  box-shadow: 0px 0px 10px #ccc;
+
+  div {
+    //form-group
+    margin-bottom: (@padding * 2);
+  }
+
+  label {
+    display: block;
+
+    &.checkbox {
+      float: right;
+      padding-top: @padding;
+    }
+  }
+
+  input {
+    margin: 0;
+    padding: @padding (@padding * 2);
+    .border-radius();
+    font: inherit;
+    color: inherit;
+
+    &[type="text"],
+    &[type="password"] {
+      width: 100%;
+      height: ceil((@font-size * 2.5)); //35
+
+      &:focus {
+        border-color: #66afe9;
+        outline: 0;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+          0 0 8px rgba(102, 175, 233, 0.6);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+          0 0 8px rgba(102, 175, 233, 0.6);
+      }
+    }
+  }
+}
+
+//button
+.video-box-submit {
+  margin: 0;
+  padding: @padding (@padding * 2);
+  font: inherit;
+  background-color: #337ab7;
+  color: #fff;
+  .border-radius();
+  border-color: #2e6da4;
+
+  &:active {
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74;
+  }
+
+  &:hover {
+    font-weight: bold;
+  }
+}
+
+//等比容器 wrap
+.video-box-wrap {
+  position: relative;
+  .ratio(61.8%);
+  //图片作为背景,由stytle引入URL
+  //background-image:url(/images/test1.jpg);
+  background-color: #000;
+  background-position: center center;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+
+  i {
+    position: absolute;
+    //z-index: 1;
+    // width: 100%;
+    // height: 100%;
+    margin: 0;
+    padding: 0 5px;
+    top: 5px;
+    right: 5px;
+    font: inherit;
+    color: #fff;
+
+    //background-color: rgba(0, 0, 0, 0); //IE9+
+    //-webkit-background-size: 30px 30px;
+    //-moz-background-size: 30px 30px;
+    //background-size: 30px 30px;
+    &.online {
+      // background-image: url(/images/online.png);
+      // background-position: center center;
+      // background-repeat: no-repeat;
+      background-color: #52c41a;
+      font-size: ceil(@font-size * 0.85);
+      // &::after {
+      //   content: "在线";
+      // }
+    }
+
+    &.offline {
+      // background-image: url(/images/offline.png);
+      // background-position: center center;
+      // background-repeat: no-repeat;
+      background-color: #ff4d4f;
+      font-size: ceil(@font-size * 0.85);
+      // &::after {
+      //   content: "离线";
+      // }
+    }
+  }
+}
+
+//video,object
+.video-box-player {
+  position: absolute; //加position兼容chrome
+  display: block;
+  //z-index: -1;
+  object-fit: fill;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+//播放控制+云台控制
+.video-box-controller {
+  position: absolute;
+  //z-index: 3;
+  width: 100%;
+  height: 100%;
+
+  iframe {
+    position: absolute;
+    visibility: inherit;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    filter: alpha(opacity=0);
+    background: rgba(0, 0, 0, 0);
+  }
+
+  div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    &.onpause {
+      //暂停
+      background-image: url(/images/onpause.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    &.onload {
+      //加载中
+      background-image: url(/images/onload.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    &.onend {
+      //播放结束
+      background-image: url(/images/onend.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    &.up {
+      background-image: url(/images/up.png);
+      background-position: top center;
+      background-repeat: no-repeat;
+    }
+
+    &.down {
+      background-image: url(/images/down.png);
+      background-position: bottom center;
+      background-repeat: no-repeat;
+    }
+
+    &.left {
+      background-image: url(/images/left.png);
+      background-position: center left;
+      background-repeat: no-repeat;
+    }
+
+    &.right {
+      background-image: url(/images/right.png);
+      background-position: center right;
+      background-repeat: no-repeat;
+    }
+
+    &.zoomin {
+      background-image: url(/images/zoomin.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    &.zoomout {
+      background-image: url(/images/zoomout.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+  }
+}
+
+//播放列表ul
+.video-box-list {
+  margin: 0;
+  padding: 0;
+  //background: #FFFDF0;
+  list-style: none;
+  &:extend(.clearfix all);
+
+  h3 {
+    margin: 0;
+    padding: 5px 0 0 5px;
+    background-color: #eee;
+    font: inherit;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border-radius: 5px 5px 0 0;
+  }
+
+  .video-box-wrap {
+    border-radius: 0 0 5px 5px;
+  }
+}
+
+.divided-1 h3 {
+  white-space: normal;
+}
+
+//li 默认2列,通过js控制列数
+.video-box-list-item {
+  position: relative;
+  float: left;
+  width: 50%;
+  min-height: 1px;
+  padding-top: floor((@grid-gutter-width / 2));
+  padding-bottom: ceil((@grid-gutter-width / 2));
+  padding-left: floor((@grid-gutter-width / 2));
+  padding-right: ceil((@grid-gutter-width / 2));
+  list-style: none;
+}
+
+/*logs*/
+
+.video-box-logs {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  min-height: (@grid-gutter-width * 8);
+  padding: (@padding * 2);
+  font: inherit;
+}
+
+.clearfix {
+
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+
+  &:after {
+    clear: both;
+  }
+}

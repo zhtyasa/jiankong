@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		   <!-- <link rel="stylesheet" type="text/css" href="js/ckplayer/ckplayer.css"> -->
+		        <script type="text/javascript" charset="utf-8" src="js/ckplayer/ckplayer.js"></script>
+	</head>
+	<body>
+		<div class="video" style="width: 600px;height: 400px;"></div>
+		<script>
+			var videoObject = {
+				container: '.video', //容器的ID或className
+				live: true, //指定为直播
+				plug: 'hls.js', //使用hls.js插件播放m3u8
+				video: 'http://106.46.169.142:8181/hls/6541/1/1/1.m3u8' //视频地址
+			}
+			new ckplayer(videoObject);
+		</script>
+	</body>
+</html>

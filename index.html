@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>直播</title>
+    <link rel="stylesheet" type="text/css" href="css/video.min.css?v=2.4.20" />
+    <script src="js/getVideo.js?v=2.10.24" type="text/javascript"></script>
+    <style type="text/css">
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        min-height: 450px;
+      }
+
+      .beian {
+        text-align: center;
+      }
+
+      .beian a {
+        color: #aaa;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="video-box" id="yst-video-box"></div>
+    </div>
+    <div class="beian">
+      <a
+        href="http://beian.miit.gov.cn"
+        target="_blank"
+        rel="noopener noreferrer"
+        >粤ICP备17024847号-1</a
+      >
+    </div>
+
+    <script type="text/javascript">
+		
+		      var config = {
+				api: '//106.46.169.142:2003/', //API接口地址
+		        filter: false, //是否过滤不在线的设备
+		        // debug: true,
+		        // logs: true,
+				controller:true
+		      };
+		
+		      var request = {
+		        //无账号时需登录
+		        // user: 'demo',
+		        //密码,无密码可忽略
+		        //password: '', 
+		        //摄像头SN,传入单个则直接播放,不传或传多个(英文逗号分隔)则可能显示播放列表
+		        //dev: 'f445ce834bd6117e' 
+		      };
+		
+		      // 部分安卓机不支持连续.调用，且不支持调用2次方法
+		      $id("yst-video-box").config(config).getVideo(request)
+		      // $id("yst-video-box").getVideo(request);
+		    
+      
+    </script>
+  </body>
+</html>
